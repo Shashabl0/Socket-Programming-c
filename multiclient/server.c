@@ -9,7 +9,7 @@
 #include<semaphore.h>
 
 sem_t mutex;
-
+int limit=2;
 struct client{
     int id;
     int sockid;
@@ -33,17 +33,22 @@ void * Comm(void *ClientDet){
     printf("Client %d is connected\n",index);
     while(1){
         char buffer[1024];
-
+        buffer[0] = '\0';
         int r = read(clientsocket,buffer,1024);
+
+        if(index == 0){
+            int n = write(Client[1].sockid,buffer,1024);
+        }
+        else if(index == 1){
+            int n = write(Client[0].sockid,buffer,1024);
+        }
         if(strncmp("quit",buffer,4)==0)
             break;
-
-        printf("Hey from client %d :: msg :: %s\n",index,buffer);
-        buffer[r] == '\0';
+            
+        printf("client %d :: msg :: %s",index,buffer);
+        buffer[0] = '\0';
         if(r<0)
             break;
-
-        printsuccess();
     }
     return NULL;
 }
@@ -69,16 +74,12 @@ int main(int argc,char *argv[]){
     printf(" Server Started on port 9800..\n");
 
     //while(1){
-        Client[0].sockid = accept(sockfd,(struct sockaddr *)&Client[0].clientAddr,&Client[0].len);
-        Client[0].id = 1;
+    for(int i=0;i<limit;i++){    
+        Client[i].sockid = accept(sockfd,(struct sockaddr *)&Client[i].clientAddr,&Client[i].len);
+        Client[i].id = i;
 
-        pthread_create(&thread[0],NULL,Comm,(void *) &Client[0]);
-        
-        Client[1].sockid = accept(sockfd,(struct sockaddr *)&Client[1].clientAddr,&Client[1].len);
-        Client[1].id = 2;
-
-        pthread_create(&thread[1],NULL,Comm,(void *) &Client[1]);
-    //}
+        pthread_create(&thread[i],NULL,Comm,(void *) &Client[i]);
+    }
 
     for(int i=0;i<2;i++){
         pthread_join(thread[i],NULL);

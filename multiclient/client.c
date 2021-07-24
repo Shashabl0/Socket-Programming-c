@@ -11,9 +11,16 @@
 
 void *Comm(void *sockID){
     int clientSocket = *((int *) sockID);
-
     while(1){
-
+        char data[1024];
+        data[0] = '\0';
+        int r = read(clientSocket,data,1024);
+        
+        if(strncmp("quit",data,4)==0)
+            break;
+        
+        printf("Anonymous Client :: %s",data);
+        data[0] = '\0';
     }
 }
 
@@ -31,23 +38,26 @@ int main(){
 
     printf("connection established...\n");
 
-    //pthread_t thread;
-    //pthread_create(&thread,NULL,)
-
+    pthread_t thread;
+    pthread_create(&thread,NULL,Comm,(void *) &clientsocket);
     while(1){
         char buffer[1024];
-
-        printf("Enter msg :: ");
+        buffer[0]='\0';
         fgets(buffer,1024,stdin);
-
-        int n = write(clientsocket,buffer,strlen(buffer));
+        printf("You :: %s",buffer);
+        
+        //printf("debug ::  %s :: ",buffer);    to debug 
+        int n = write(clientsocket,buffer,1024);
         if(n<0)
             return -1;
 
         if(strncmp("quit",buffer,4)==0)
             break;
         
+        
+        buffer[0]='\0';
     }
+    pthread_join(thread,NULL);
     close(clientsocket);
 
     return 0;

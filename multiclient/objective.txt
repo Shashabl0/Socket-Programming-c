@@ -1,0 +1,19 @@
+multi client project
+
+
+create server client socket program which
+* has common server for data flow
+* each client can send multiple msgs
+* each client can receive multiple msgs
+
+future objectives 
+* create buffer memory to store data if one goes off
+
+
+further ideas:-
+add name field in struct Client
+then view available Client in server
+and message a particular client from one client
+
+
+if i say i have like max allowed client is 5, then 
