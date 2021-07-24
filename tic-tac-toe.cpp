@@ -85,6 +85,7 @@ int main(){
             break;
         }
     }
-    if(!isfull(board))   cout<<"Tie Game !! "<<endl;
+    if(isfull(board))
+        cout<<"Tie Game !! "<<endl;
     return 0;
 }
