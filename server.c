@@ -15,7 +15,7 @@ void error(char *msg){
 int main(int argc,char *argv[]){
     
     if(argc<2){
-        fprintf(stderr,"What is this behaviour Bro?\nPort Number not provided\nProgram Terminated\n");
+        fprintf(stderr,"Port Number not provided\nProgram Terminated\n");
         exit(1);
     }
     int sockfd, newsockfd, portno, n;
