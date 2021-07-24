@@ -11,7 +11,6 @@ void error(char *msg){
     exit(1);
 }
 
-
 int main(int argc,char *argv[]){
     
     if(argc<2){
@@ -46,28 +45,42 @@ int main(int argc,char *argv[]){
     if(newsockfd <0){
         error("Error on accept");
 	}
-	
-    printf("Connection established...\n");
 
-    while(1){
-        bzero(buffer,250);
-        n = read(newsockfd,buffer,255);
-        if(n<0)
-            error("read failed");
-        printf("Client : %s",buffer);
-	bzero(buffer,255);
-	fgets(buffer,255,stdin);
+    int num1,num2,answer=0;
+    char op;
 
-	n = write(newsockfd,buffer,strlen(buffer));
-	if(n < 0){
-		error("write error");
-        close(newsockfd);	
-        close(sockfd);
+    n =write(newsockfd,"Enter the Operation : ",strlen("Enter the Operation : "));
+    if(n < 0)
+        error("error writing to socket" );
+    
+    read(newsockfd,&num1,sizeof(int));
+    read(newsockfd,&op,sizeof(int));
+    read(newsockfd,&num2,sizeof(int));
+
+    printf("we got values %d %c %d",num1,op,num2);
+    switch(op){
+        case '+':
+            answer = num1 + num2;
+            break;
+        case '-':
+            answer = num1 - num2;
+            break;
+        case '*':
+            answer = num1 * num2;
+            break;
+        case '/':
+            answer = num1/num2;
+            break;
+        default:
+            answer = num1;
+            break;
     }
-	int i = strncmp("bye",buffer,3);
-	if(i == 0)
-		break;
-    }
+    
+    n = write(newsockfd,&answer,sizeof(int));
+    if(n<0)
+        error("error writing to sock");
+
+
 	close(newsockfd);	
 	close(sockfd);
     return 0;

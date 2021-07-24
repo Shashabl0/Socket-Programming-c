@@ -43,27 +43,34 @@ int main(int argc,char *argv[]){
 	if(connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr))<0)
 		error("connection failed");
 	
-	printf("Connection established...\n");
-
-while(1){
-	printf("You : ");
 	bzero(buffer,255);
 
-	
-	fgets(buffer,255,stdin);
-	n = write(sockfd,buffer,strlen(buffer));
-	if(n<0)
-		error("write failed");
-	bzero(buffer,255);
-	printf("Waiting for server to respond..\n");
 	n = read(sockfd,buffer,255);
 	if(n<0)
 		error("error on read");
-	printf("Server : %s",buffer);
-	int i = strncmp("bye",buffer,3);
-	if(i == 0)
-		break;
-	}
+
+	printf("%s",buffer);
+	
+
+	int num1,num2,ans=0;
+	char op;
+	scanf("%d %c %d",&num1,&op,&num2);
+
+	n = write(sockfd,&num1,sizeof(int));
+	n = write(sockfd,&op,sizeof(char));
+	n = write(sockfd,&num2,sizeof(int));
+	
+	if(n<0)
+		error("write failed");
+	
+	//tho we dont need it
+	bzero(buffer,255);
+	
+	n = read(sockfd,&ans,sizeof(int));
+	if(n<0)
+		error("error on read");
+
+	printf(" %d ",ans);
 	close(sockfd);
 	return 0;
 }
