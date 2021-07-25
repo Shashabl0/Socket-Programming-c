@@ -47,7 +47,7 @@ void * Comm(void *ClientDet){
         char buffer[1024];
         
         if(strncmp("LIST",databuffer,4)==0){
-        //    t=1;
+            //********************************LIST FEATURE***********************************
             w = write(clientsocket,"Listing Client Avaiable\n",1024);
             for(int j=0;j<active;j++){
                 if(Client[j].sockid == -1)
@@ -61,29 +61,32 @@ void * Comm(void *ClientDet){
             if(active-1 == disconnt){
                 w = write(clientsocket,"No other Client available\n",1024);
             }
-
+            //********************************ENDS HERE***********************************************
         }
         else if(strncmp("SEND",databuffer,4)==0){
-        //    t=1;
+            //*********************************SEND FEATURE******************************************
             // insert msg function
             perror("Not Available");
             //here
+            //*********************************ENDS HERE**********************************************
         }
         else if(strncmp("SELF",databuffer,4)==0){
-        //    t=1;
+            //*********************************SELF FEATURE******************************************
             snprintf (buffer, sizeof(buffer), "Self ID%d\n",index);
             w = write(clientsocket,buffer,1024);
             buffer[0]='\0';
-
+            //*********************************ENDS HERE**********************************************
         }
         else if(strncmp("quit",databuffer,4)==0){
-        //    t=1;
+            //********************************QUIT FEATURE*******************************************
             w = write(clientsocket,"quit",1024);
             clientDetail->sockid = -1;
             disconnt++;
             printf("\nAvailable clients %d\n",active-disconnt);
             break;
+            //*********************************ENDS HERE**********************************************
         }
+        //*********DEFAULT************************
         /*else if(databuffer != "" && t > 0){
             printf("Databuffer :: %s\n",databuffer);
             //strcat(buffer,"Be in you limit right now :P its not yet complete\n");
@@ -92,6 +95,7 @@ void * Comm(void *ClientDet){
             t--;    //counter for this program
         }
         */
+        //********ENDS***************************
         if(w < 0){
             perror("options Write failed");
         }
