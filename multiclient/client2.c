@@ -15,7 +15,7 @@ void *Comm(void *sockID){
         char data[1024];
         int r = read(clientSocket,data,sizeof(data));
         
-        if(strncmp("quit",data,4)==0)
+        if(strncmp("QUIT",data,4)==0)
             break;
         
         printf("R:%s",data);
@@ -52,7 +52,7 @@ int main(){
         if(n<0)
             return -1;
 
-        if(strncmp("quit",buffer,4)==0){
+        if(strncmp("QUIT",buffer,4)==0){
             flag =0;
             break;
         }

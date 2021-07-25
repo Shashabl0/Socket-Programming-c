@@ -9,7 +9,7 @@
 #include<semaphore.h>
 
 sem_t mutex;
-int limit=3;
+int CLIENT_LIMIT=3;
 int active = 0;
 int disconnt = 0;
 int flag = 0;
@@ -31,7 +31,7 @@ void * Comm(void *ClientDet){
     printf("thread id %ld ",pthread_self());
     printf("Client %d is connected\n",index);
     
-    char options[]=" welcome to server\nyou have options:\nLIST client\nSEND client\n";
+    char options[]="\n   CHAT SERVERv1.1\nyou have options:\n LIST: lists active clients\n SEND: working\n QUIT: to close connection\n\n";
     
     int w = write(clientsocket,options,1024);
     if(w < 0){
@@ -72,14 +72,14 @@ void * Comm(void *ClientDet){
         }
         else if(strncmp("SELF",databuffer,4)==0){
             //*********************************SELF FEATURE******************************************
-            snprintf (buffer, sizeof(buffer), "Self ID%d\n",index);
+            snprintf (buffer, sizeof(buffer), " ID - %d\n",index);
             w = write(clientsocket,buffer,1024);
             buffer[0]='\0';
             //*********************************ENDS HERE**********************************************
         }
-        else if(strncmp("quit",databuffer,4)==0){
+        else if(strncmp("QUIT",databuffer,4)==0){
             //********************************QUIT FEATURE*******************************************
-            w = write(clientsocket,"quit",1024);
+            w = write(clientsocket,"QUIT",1024);
             clientDetail->sockid = -1;
             disconnt++;
             printf("\nAvailable clients %d\n",active-disconnt);
@@ -89,8 +89,8 @@ void * Comm(void *ClientDet){
         //*********DEFAULT************************
         /*else if(databuffer != "" && t > 0){
             printf("Databuffer :: %s\n",databuffer);
-            //strcat(buffer,"Be in you limit right now :P its not yet complete\n");
-            w = write(clientsocket,"Be in you limit right now :P its not yet complete\n",51);
+            //strcat(buffer,"Be in you CLIENT_LIMIT right now :P its not yet complete\n");
+            w = write(clientsocket,"Be in you CLIENT_LIMIT right now :P its not yet complete\n",51);
             buffer[0]='\0';
             t--;    //counter for this program
         }
@@ -125,7 +125,7 @@ int main(int argc,char *argv[]){
     printf(" Server Started on port 9800..\n");
 
     //while(1){
-    for(int i=0;i<limit && flag==0;i++){    
+    for(int i=0;i<CLIENT_LIMIT && flag==0;i++){    
         Client[i].sockid = accept(sockfd,(struct sockaddr *)&Client[i].clientAddr,&Client[i].len);
 
         pthread_create(&thread[i],NULL,Comm,(void *) &Client[i]);
