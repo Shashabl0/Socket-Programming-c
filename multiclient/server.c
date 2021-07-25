@@ -57,7 +57,7 @@ int main(int argc,char *argv[]){
     
     int sockfd = socket(AF_INET,SOCK_STREAM,0);
     
-    struct sockaddr_in serverAddr,clientAddr;
+    struct sockaddr_in serverAddr;
     bzero((char *) &serverAddr, sizeof(serverAddr));
 
     serverAddr.sin_family = AF_INET;
