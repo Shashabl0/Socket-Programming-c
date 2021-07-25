@@ -57,14 +57,16 @@ int main(int argc, char *argv[])
     fseek(f, 0, SEEK_SET);
     char ch;
     
+    /*
     while(ch!=EOF){
-        fgets(buffer,20,f);
+        fgets(buffer,50,f);
         printf("read1::%s",buffer);
-        write(Clientsocket,buffer,255);
+        write(Clientsocket,buffer,strlen(buffer));
         ch = fgetc(f);
         printf("\nchar c::%c",c);
+        buffer[0]='\0';
     }
-    /*
+    */
     while(ch!=EOF){
         fscanf(f,"%s",buffer);
         if(ch == '\n')
@@ -73,7 +75,7 @@ int main(int argc, char *argv[])
         write(Clientsocket,buffer,255);
         ch = fgetc(f);
     }
-*/
+
     printf("\nFile Send Successfull");
 
     close(Clientsocket);

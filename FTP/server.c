@@ -46,7 +46,7 @@ int main(int argc, char *argv[]){
 
     while(ch != words){
         read(clientsocket,buffer,255);
-        printf("rev::%s\n",buffer);
+        //printf("rev::%s\n",buffer);
         fprintf(fp," %s",buffer);
         //fputs(buffer,fp);
         ch++;
