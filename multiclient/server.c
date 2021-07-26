@@ -29,7 +29,6 @@ void * Comm(void *ClientDet){
     int index = clientDetail->id;
     int clientsocket = clientDetail->sockid;
 
-    printf("thread id %ld ",pthread_self());
     printf("Client %d is connected\n",index);
     while(1){
         char buffer[1024];
