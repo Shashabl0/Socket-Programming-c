@@ -11,9 +11,11 @@
 int flag = 1;
 void *Comm(void *sockID){
     int clientSocket = *((int *) sockID);
+    
+    char data[1024];    
     while(flag){
-        char data[1024];
-        int r = read(clientSocket,data,sizeof(data));
+        memset(data,'\0',1024);
+        int r = read(clientSocket,data,1024);
         
         if(strncmp("QUIT",data,4)==0)
             break;

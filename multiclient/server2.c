@@ -19,9 +19,31 @@ struct client{
     int sockid;
     struct sockaddr_in clientAddr;
     int len;
+    int connect;
 };
 struct client Client[2];
 pthread_t thread[2];
+
+void *rev(void *clientDetails){
+    struct client* clientDetail = (struct client*)clientDetails;
+    int index = clientDetail->id;
+    int clientsocket = clientDetail->sockid;
+    char buffer[1024];
+    printf(" connet id ::%d::",clientDetail->connect);
+    printf(" data buff ::%s::",buffer);
+    while(1){
+        read(clientDetail->connect,buffer,1024);
+        if(strlen(buffer)!=0){
+            write(clientsocket,buffer,1024);
+            printf("buff 6 client %d :: msg :: %s\n",index,buffer);
+        }
+
+        if(strncmp("bye",buffer,3)==0)
+            break;
+        buffer[0]='\0';
+    }
+        //    }
+}
 
 void * Comm(void *ClientDet){
     struct client* clientDetail = (struct client*)ClientDet;
@@ -46,6 +68,12 @@ void * Comm(void *ClientDet){
             perror("option read failed");
         char buffer[1024];
         
+        if(strncmp("Y",databuffer,1)==0){
+            pthread_t t1; 
+            pthread_create(&t1,NULL,rev,(void *)&clientDetail);
+            pthread_join(t1,NULL);
+        }
+
         if(strncmp("LIST",databuffer,4)==0){
             //********************************LIST FEATURE***********************************
             w = write(clientsocket,"Listing Client Avaiable\n",1024);
@@ -66,7 +94,74 @@ void * Comm(void *ClientDet){
         else if(strncmp("SEND",databuffer,4)==0){
             //*********************************SEND FEATURE******************************************
             // insert msg function
-            perror("Not Available");
+            char dbuffer[255];
+            int i=0;
+            w = write(clientsocket,"(to)\n",1024);
+            if(w < 0)
+                perror("write1 failed");
+            dbuffer[0]='\0';
+            while(1){
+                r = read(clientsocket,dbuffer,1024);
+                if(r < 0)
+                    perror("read failed 1");
+                printf(" BUFF1 ::%s: strlen : %ld\n",dbuffer,strlen(dbuffer));
+                if(strlen(dbuffer) !=0)
+                    break;
+            }
+            for(i=0;i<active;i++){
+                if(Client[i].sockid == -1)
+                    continue;
+                if(Client[i].id == atoi(dbuffer) && index != atoi(dbuffer)){
+                    printf("its a match !!\n");
+                    break;
+                }
+            }
+            if(Client[i].id == atoi(dbuffer) && i!=active){
+                    dbuffer[0]='\0';
+                    struct client cli = Client[i];
+                    
+                    w = write(cli.sockid,"someone want to chat accept?(Y/N)\n",strlen("someone want to chat accept?(Y/N)\n"));
+                    while(1){
+                        r = read(cli.sockid,dbuffer,1024);
+                        if(r < 0)
+                            perror("read failed 1");
+                        if(strlen(dbuffer) !=0)
+                            break;
+                    }
+
+                    printf(" buff3::%s::strlen::%ld::\n",dbuffer,strlen(dbuffer));
+
+                    if(strncmp("Y",dbuffer,1)==0){
+                        Client[i].connect = clientsocket;
+                        while(1){
+                            dbuffer[0] = '\0';
+                            while(1){
+                                r = read(clientsocket,dbuffer,1024);
+                                if(r < 0)
+                                    perror("read failed 1");
+                                printf(" BUFF4 ::%s: strlen : %ld\n",dbuffer,strlen(dbuffer));
+                                if(strlen(dbuffer) !=0)
+                                    break;
+                            }
+                            int n = write(cli.sockid,dbuffer,1024);
+                                
+                            printf("buff 5 client %d :: msg :: %s\n",index,dbuffer);
+
+                            if(strncmp("bye",dbuffer,3)==0){
+                                printf("connection closed\n");
+                                cli.connect = 0;
+                                break;
+                            }
+                        }
+                    }
+                    else if(strncmp("N",dbuffer,1)==0){
+                        w = write(clientsocket,"Sorry he denied for connect..\n",strlen("Sorry he denied for connect..\n"));
+                    }
+            }
+            else{
+                perror("no Client of that id present !!");
+            }
+            
             //here
             //*********************************ENDS HERE**********************************************
         }
@@ -74,7 +169,6 @@ void * Comm(void *ClientDet){
             //*********************************SELF FEATURE******************************************
             snprintf (buffer, sizeof(buffer), " ID - %d\n",index);
             w = write(clientsocket,buffer,1024);
-            buffer[0]='\0';
             //*********************************ENDS HERE**********************************************
         }
         else if(strncmp("QUIT",databuffer,4)==0){
@@ -86,6 +180,7 @@ void * Comm(void *ClientDet){
             break;
             //*********************************ENDS HERE**********************************************
         }
+        buffer[0]='\0';
         //*********DEFAULT************************
         /*else if(databuffer != "" && t > 0){
             printf("Databuffer :: %s\n",databuffer);
@@ -130,6 +225,7 @@ int main(int argc,char *argv[]){
 
         pthread_create(&thread[i],NULL,Comm,(void *) &Client[i]);
         Client[i].id = thread[i]%1000;
+        Client[i].connect = 0;
         active++;
         if(active - disconnt == 0){
             break;
