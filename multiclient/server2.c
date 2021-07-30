@@ -85,7 +85,7 @@ void * Comm(void *ClientDet){
             }
             if(Client[i].id == atoi(dbuffer) && i!=active){
                     dbuffer[0]='\0';
-                    write(Client[i].sockid,"Someone just got connected type YES to engage:\n",strlen("Someone just got connected type YES to engage:\n"));
+                    write(Client[i].sockid,"Someone wants to connect! type YES/NO:\n",strlen("Someone wants to connect! type YES/NO:\n"));
                     Client[i].connect = clientsocket;
                     while(1){
                         dbuffer[0] = '\0';
@@ -141,6 +141,16 @@ void * Comm(void *ClientDet){
 
             }
         }   //*****************************ENDS HERE**************************************************
+        else if(strncmp("NO",databuffer,2)==0){
+            //********************************YES*****************************************************
+            printf("NO Mode\n");
+            write(clientDetail->connect,"Connection refused..\n",strlen("Connection refused.."));
+            write(clientsocket,"*Connection closed now*\n",strlen("*Connection closed now*\n"));
+            write(clientDetail->connect,"*Connection closed now*\n",strlen("*Connection closed now*\n"));    
+            printf("connection closed\n");
+            Client[clientDetail->id].connect = 0;
+        }   //*****************************ENDS HERE**************************************************
+        
         //*********DEFAULT************************
         /*else if(databuffer != "" && t > 0){
             printf("Databuffer :: %s\n",databuffer);

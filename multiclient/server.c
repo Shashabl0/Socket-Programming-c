@@ -19,10 +19,7 @@ struct client{
 struct client Client[2];
 pthread_t thread[2];
 
-//checking if it supports outer function tho i m 100% sure it will
-void printsuccess(){
-    printf("how success tastes like ?\n");
-}
+
 
 void * Comm(void *ClientDet){
     struct client* clientDetail = (struct client*)ClientDet;
